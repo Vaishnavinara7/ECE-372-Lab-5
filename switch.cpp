@@ -2,18 +2,17 @@
 // Date:04/20/2023
 // Assignment: Lab 5
 //
+#include<avr/io.h>
 #include "switch.h"
-#include <avr/io.h>
+void initSwitchPD0(){
+    
+    DDRD &= ~(1<<DDD0);      //Set pin direction as input (pin 21 on board)
+    PORTD |= (1<<PORTD0);  // enble the pull up resistor 
+    
+    // SET UP EXTERNAL INTERRUPT
+    EICRA &= ~(1<<ISC01); // the change in any edge of INT0 is enable  [A reigister is used for 0:3]
+    EICRA |= (1<<ISC00);
 
-/*
- * Initializes pull-up resistor on PB3 and sets it into input mode
- */
-void initSwitchPB3(){
-
-DDRB &= ~(1 << DDB3);
-PORTB |= (1 << PORTB3);
-
-
-PCICR |= (1 << PCIE0); // enable PCINT 0 - 7
-PCMSK0 |= (1 << PCINT3); // enable PCINT3
+    EIMSK |= (1<<INT0); // external INTO is enable   ( if switch to other edge, this register must be disable first)
+    
 }
