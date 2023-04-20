@@ -36,9 +36,9 @@ Serial.begin(9600);   // Serial (for debugging)
   sei();                // Enable global interrupts
   
   // SETUP I2C
-  signed int x_val = 0;
-  signed int y_val = 0;
-  signed int z_val = 0;
+  signed int X_val = 0;
+  signed int Y_val = 0;
+  signed int Z_val = 0;
   StartI2C_Trans(SLA);
   write(PWR_MGMT);// address on SLA for Power Management
   write(WAKEUP);  // send data to Wake up from sleep mode
