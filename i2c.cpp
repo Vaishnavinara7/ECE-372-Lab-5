@@ -35,9 +35,12 @@ void stopI2C_Trans(){
 
 }
 
-void Read_from(unsigned char SLA, unsigned char MEMADDRESS){
+int *Read_Acc(unsigned char SLA, unsigned char MEMADDRESS){
   // this function sets up reading from SLA at the SLA MEMADDRESS 
-
+ static signed int accelerometer_axes[3];
+ signed int accelerometer_x;
+ signed int accelerometer_y;
+ signed int accelerometer_z;
   StartI2C_Trans(SLA);
  
   write(MEMADDRESS);
@@ -47,13 +50,41 @@ void Read_from(unsigned char SLA, unsigned char MEMADDRESS){
   TWDR = (SLA << 1) | 0x01; // 7 bit address for slave plus read bit
   TWCR = (1 << TWINT) | (1 << TWEN)| (1 << TWEA);// trigger with master sending ack
   wait_for_completion;
-  TWCR = (1<< TWINT) | (1 << TWEN);  // master can send a nack now
+ 
+  TWCR = (1<< TWINT) | (1 << TWEN)| (1 << TWEA);  // master can send a nack now
   wait_for_completion;
+  accelerometer_x = TWDR;
+ 
+  TWCR = (1<< TWINT) | (1 << TWEN)| (1 << TWEA);  // master can send a nack now
+  wait_for_completion;
+  accelerometer_x = (TWDR<<8);
+ 
+  TWCR = (1<< TWINT) | (1 << TWEN)| (1 << TWEA);  // master can send a nack now
+  wait_for_completion;
+  accelerometer_y = TWDR;
+ 
+   TWCR = (1<< TWINT) | (1 << TWEN)| (1 << TWEA);  // master can send a nack now
+  wait_for_completion;
+  accelerometer_y = (TWDR<<8);
+ 
+   TWCR = (1<< TWINT) | (1 << TWEN)| (1 << TWEA);  // master can send a nack now
+  wait_for_completion;
+  accelerometer_z = TWDR;
+ 
+    TWCR = (1<< TWINT) | (1 << TWEN)| (1 << TWEA);  // master can send a nack now
+  wait_for_completion;
+  accelerometer_z = (TWDR<<8);
+ 
+ accelerometer_axes[0] = accelerometer_x;
+ accelerometer_axes[1] = accelerometer_y;
+ accelerometer_axes[2] = accelerometer_z;
+ 
   TWCR = (1 << TWINT) | (1 << TWEN) | (1 << TWSTO); // Stop condition
 // after this function is executed the TWDR register has the data from SLA that Master wants to read
+ return accelerometer_axes;
 }
 
-unsigned char Read_data() // Returns the last byte from the data register
-{
-  return TWDR;
-}
+//unsigned char Read_data() // Returns the last byte from the data register
+//{
+//  return TWDR;
+//}
